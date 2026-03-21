@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+
+java {
+    toolchain { languageVersion.set(JavaLanguageVersion.of(21)) }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testImplementation 'org.testng:testng:7.12.0'
+    testImplementation 'io.rest-assured:rest-assured:6.0.0'
+
+    testImplementation 'org.slf4j:slf4j-api:2.0.13'
+    testImplementation 'ch.qos.logback:logback-classic:1.5.32'
+    testImplementation 'org.slf4j:log4j-over-slf4j:2.0.13'
+}
+
+test {
+    reports {
+        html.required = true
+        junitXml.required = true
+    }
+    useTestNG() {
+        outputDirectory = file('test-output')
+        suites('src/test/resources/testrunner/testingsuite.xml')
+    }
+}

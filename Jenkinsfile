@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-            // Gradle 9 loves a dedicated user home for caching
-            GRADLE_USER_HOME = "${WORKSPACE}/.gradle"
+        // Gradle 9 loves a dedicated user home for caching
+        GRADLE_USER_HOME = '/root/.gradle'
     }
 
     stages {
@@ -15,15 +15,13 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Starting Gradle Build...'
-                sh 'chmod +x gradlew'
-
-                sh './gradlew assemble --no-daemon'
+                sh 'gradle clean assemble --no-daemon'
             }
         }
         stage('Test') {
             steps {
                 echo 'Running Unit Tests...'
-                sh './gradlew test --no-daemon'
+                sh 'gradle test --no-daemon'
             }
             post {
                 always {

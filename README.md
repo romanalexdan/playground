@@ -25,7 +25,7 @@ Supported features:
 ### 1. Clone repository
 
 ```bash
-git clone https://your.git.repo/url playground
+git clone https://github.com/romanalexdan/playground.git
 cd playground
 ```
 

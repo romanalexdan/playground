@@ -1,12 +1,13 @@
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package util;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+@Slf4j
 public class EnvConfig {
-    private static final Logger logger = LoggerFactory.getLogger(EnvConfig.class);
     private static final Properties props = new Properties();
     private static final String CONFIG_FILE = "test-config.properties";
 
@@ -15,12 +16,12 @@ public class EnvConfig {
         try (InputStream is = EnvConfig.class.getClassLoader().getResourceAsStream(CONFIG_FILE)) {
             if (is != null) {
                 props.load(is);
-                logger.info("Successfully loaded configuration from {}", CONFIG_FILE);
+                log.info("Successfully loaded configuration from {}", CONFIG_FILE);
             } else {
-                logger.warn("{} not found in resources. Falling back to System properties/defaults.", CONFIG_FILE);
+                log.warn("{} not found in resources. Falling back to System properties/defaults.", CONFIG_FILE);
             }
         } catch (IOException e) {
-            logger.error("Failed to read {}: {}", CONFIG_FILE, e.getMessage());
+            log.error("Failed to read {}: {}", CONFIG_FILE, e.getMessage());
         }
     }
 

@@ -53,8 +53,8 @@ Test reports:
 
 ## Running single tests
 
-- JUnit: `./gradlew test --tests org.example.SimpleJunitTest`
-- TestNG: `./gradlew test --tests org.example.SimpleTestNGTest`
+- JUnit: `./gradlew test --tests org.example.simple.SimpleJunitTest`
+- TestNG: `./gradlew test --tests org.example.simple.SimpleTestNGTest`
 
 ## Jenkins Integration
 

@@ -3,13 +3,13 @@
 <suite name="Simple test suite" verbose="4">
     <test name="Sanity test">
         <classes>
-            <class name="SimpleTestNGTest">
+            <class name="simple.SimpleTestNGTest">
                 <methods>
                     <include name="test2"/>
                     <include name="test3"/>
                 </methods>
             </class>
-            <class name="SimpleApiTest"/>
+            <class name="rest.SimpleApiTest"/>
         </classes>
     </test>
 </suite>

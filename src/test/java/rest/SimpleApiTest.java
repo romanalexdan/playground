@@ -1,3 +1,5 @@
+package rest;
+
 import lombok.extern.slf4j.Slf4j;
 import org.example.models.Transaction;
 import org.example.models.TransactionResponse;
@@ -7,6 +9,7 @@ import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import util.EnvConfig;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

@@ -4,6 +4,10 @@
     <test name="Sanity test">
         <classes>
             <class name="SimpleTestNGTest">
+                <methods>
+                    <include name="test2"/>
+                    <include name="test3"/>
+                </methods>
             </class>
         </classes>
     </test>

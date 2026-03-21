@@ -1,0 +1,11 @@
+services:
+  wiremock:
+    image: wiremock/wiremock:latest
+    container_name: fintech-mock-server
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./mappings:/home/wiremock/mappings
+    command:
+      - --verbose
+      - --global-response-templating

@@ -1,0 +1,21 @@
+steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: 9.4.1
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: java-kotlin
+
+    
+    - name: Custom Build
+      run: |
+        gradle clean assemble --no-daemon
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3

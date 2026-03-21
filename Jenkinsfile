@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        GRADLE_BIN = '/opt/gradle/bin/gradle'
+        GRADLE_BIN = '/opt/gradle_source/bin/gradle'
         GRADLE_USER_HOME = '/var/jenkins_home/.gradle'
     }
 

@@ -15,10 +15,8 @@ pipeline {
 
         stage('Initialize') {
             steps {
-                // Ensure the binary is executable inside the Linux environment
                 sh "chmod +x ${GRADLE_BIN}"
 
-                // Verify the version using the direct path
                 sh "${GRADLE_BIN} -v"
             }
         }
@@ -29,6 +27,18 @@ pipeline {
                 sh "${GRADLE_BIN} clean assemble --no-daemon"
             }
         }
+
+        stage('Setup Configuration') {
+            steps {
+                // Use the Config File Provider to pull the properties file onto the agent
+                configFileProvider([configFile(fileId: 'testenv', variable: 'ENV_PROPS')]) {
+                    script {
+                        sh "cp ${env.ENV_PROPS} ./src/test/resources/test-config.properties"
+                    }
+                }
+            }
+        }
+
         stage('Test') {
             steps {
                 echo 'Running Unit Tests...'

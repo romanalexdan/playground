@@ -1,0 +1,59 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "/v1/transactions?limit=2"
+      },
+      "response": {
+        "status": 200,
+        "body": "{\"data\": [{\"id\": \"tx_1\", \"amount\": 100.05}, {\"id\": \"tx_2\", \"amount\": 50.00}], \"next_cursor\": \"m93XzMifQ\"}",
+        "headers": { "Content-Type": "application/json" }
+      }
+    },
+    {
+      "name": "Rate Limit Trigger",
+      "request": {
+        "method": "POST",
+        "url": "/v1/transfer"
+      },
+      "newScenarioState": "Throttled",
+      "response": {
+        "status": 429,
+        "headers": {
+          "Retry-After": "5",
+          "Content-Type": "application/json"
+        },
+        "body": "{\"error\": \"Rate limit exceeded. Try again in 5 seconds.\"}"
+      }
+    },
+    {
+      "name": "Async KYC - Pending State",
+      "request": {
+        "method": "GET",
+        "url": "/v1/kyc/status/user_123"
+      },
+      "scenarioName": "KYC Flow",
+      "requiredScenarioState": "Started",
+      "newScenarioState": "Processing",
+      "response": {
+        "status": 200,
+        "body": "{\"user_id\": \"user_123\", \"status\": \"PENDING\"}"
+      }
+    },
+    {
+      "name": "Async KYC - Completed State (After Retry)",
+      "request": {
+        "method": "GET",
+        "url": "/v1/kyc/status/user_123"
+      },
+      "scenarioName": "KYC Flow",
+      "requiredScenarioState": "Processing",
+      "response": {
+        "status": 200,
+        "body": "{\"user_id\": \"user_123\", \"status\": \"APPROVED\"}",
+        "fixedDelayMilliseconds": 1000
+      }
+    }
+  ]
+}

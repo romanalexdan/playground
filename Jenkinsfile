@@ -2,14 +2,28 @@ pipeline {
     agent any
 
     stages {
-        stage('Hello') {
+        stage('Checkout') {
             steps {
-                echo 'Hello World'
+                checkout scm
             }
         }
-        stage('Goodbye') {
+        stage('Build') {
             steps {
-                echo 'Goodbye World'
+                echo 'Starting Gradle Build...'
+                sh 'chmod +x gradlew'
+
+                sh './gradlew build'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running Unit Tests...'
+                sh './gradlew test'
+            }
+            post {
+                always {
+                    junit 'build/test-results/test/*.xml'
+                }
             }
         }
     }

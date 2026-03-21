@@ -33,7 +33,7 @@ pipeline {
                 // Use the Config File Provider to pull the properties file onto the agent
                 configFileProvider([configFile(fileId: 'testenv', variable: 'ENV_PROPS')]) {
                     script {
-                        sh "cp ${env.ENV_PROPS} ./src/test/resources/test-config.properties"
+                        sh "cp \"${env.ENV_PROPS}\" \"src/test/resources/test-config.properties\""
                     }
                 }
             }

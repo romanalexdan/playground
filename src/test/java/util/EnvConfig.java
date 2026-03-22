@@ -39,6 +39,19 @@ public class EnvConfig {
         return props.getProperty(key, defaultValue);
     }
 
+    public static boolean getBoolean(String key, boolean defaultValue) {
+        // Reuse your existing 'get' method to handle the Priority logic (System vs File)
+        // We pass null as the default here so we can detect if the key exists at all
+        String value = get(key, null);
+
+        if (value == null || value.isEmpty()) {
+            return defaultValue;
+        }
+
+        // parseBoolean handles "true" (ignore case) -> true, everything else -> false
+        return Boolean.parseBoolean(value.trim());
+    }
+
     // Helper methods for your specific Fintech variables
     public static String getBaseUrl() {
         return get("base_url", "http://localhost:8081");
@@ -54,5 +67,9 @@ public class EnvConfig {
         // Secrets are usually better as Env Vars for security masking in Jenkins
         String key = System.getenv("kyc_provider_url");
         return (key != null) ? key : get("kyc_provider_url", "http://localhost:8081/v1/kyc");
+    }
+
+    public static Boolean getIsMockedAPI() {
+        return getBoolean("api_mocked", true);
     }
 }

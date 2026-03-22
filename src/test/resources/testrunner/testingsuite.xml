@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Simple test suite" verbose="4">
-    <test name="Sanity test">
+    <test name="Sanity test" parallel="methods" thread-count="2">
         <classes>
             <class name="simple.SimpleTestNGTest">
                 <methods>
@@ -9,7 +9,12 @@
                     <include name="test3"/>
                 </methods>
             </class>
-            <class name="rest.SimpleApiTest"/>
+        </classes>
+    </test>
+    <test name="Smoke test" parallel="none">
+        <classes>
+            <class name="rest.GetApiTest"/>
+            <class name="rest.PostApiTest"/>
         </classes>
     </test>
 </suite>

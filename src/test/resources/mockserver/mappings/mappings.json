@@ -8,15 +8,47 @@
       "response": {
         "status": 200,
         "body": "{\"data\": [{\"id\": \"tx_1\", \"amount\": 100.05}, {\"id\": \"tx_2\", \"amount\": 50.00}], \"next_cursor\": \"m93XzMifQ\"}",
-        "headers": { "Content-Type": "application/json" }
+        "headers": {
+          "Content-Type": "application/json"
+        }
       }
     },
     {
-      "name": "Rate Limit Trigger",
+      "name": "Transactions - Page 2 (Using Cursor)",
+      "request": {
+        "method": "GET",
+        "url": "/v1/transactions?limit=2&cursor=m93XzMifQ"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"data\": [{\"id\": \"tx_3\", \"amount\": 75.20}, {\"id\": \"tx_4\", \"amount\": 10.00}], \"next_cursor\": \"zY29uZF9wYWdl\"}"
+      }
+    },
+    {
+      "name": "Transactions - Page 3 (Final/Empty)",
+      "request": {
+        "method": "GET",
+        "url": "/v1/transactions?limit=2&cursor=zY29uZF9wYWdl"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"data\": [], \"next_cursor\": null}"
+      }
+    },
+    {
+      "name": "Rate Limit - Step 1: Trigger",
       "request": {
         "method": "POST",
         "url": "/v1/transfer"
       },
+      "scenarioName": "TransferRecoveryLoop",
+      "requiredScenarioState": "Started",
       "newScenarioState": "Throttled",
       "response": {
         "status": 429,
@@ -25,6 +57,23 @@
           "Content-Type": "application/json"
         },
         "body": "{\"error\": \"Rate limit exceeded. Try again in 5 seconds.\"}"
+      }
+    },
+    {
+      "name": "Rate Limit - Step 2: Recovery",
+      "request": {
+        "method": "POST",
+        "url": "/v1/transfer"
+      },
+      "scenarioName": "TransferRecoveryLoop",
+      "requiredScenarioState": "Throttled",
+      "newScenarioState": "Started",
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"status\": \"SUCCESS\", \"message\": \"Recovered!\"}"
       }
     },
     {
@@ -53,6 +102,89 @@
         "status": 200,
         "body": "{\"user_id\": \"user_123\", \"status\": \"APPROVED\"}",
         "fixedDelayMilliseconds": 1000
+      }
+    },
+    {
+      "name": "Order Creation - Initial Success",
+      "request": {
+        "method": "POST",
+        "url": "/v1/orders",
+        "headers": {
+          "Idempotency-Key": {
+            "matches": "[a-zA-Z0-9-]+"
+          }
+        }
+      },
+      "scenarioName": "Order Process",
+      "requiredScenarioState": "Started",
+      "newScenarioState": "Order Created",
+      "response": {
+        "status": 201,
+        "body": "{\"order_id\": \"ord_999\", \"status\": \"PLACED\", \"price\": \"1250.5025\", \"currency\": \"USD\"}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "name": "Order Creation - Idempotent Retry",
+      "request": {
+        "method": "POST",
+        "url": "/v1/orders",
+        "headers": {
+          "Idempotency-Key": {
+            "equalTo": "retry-key-123"
+          }
+        }
+      },
+      "scenarioName": "Order Process",
+      "requiredScenarioState": "Order Created",
+      "response": {
+        "status": 200,
+        "body": "{\"order_id\": \"ord_999\", \"status\": \"PLACED\", \"price\": \"1250.5025\", \"note\": \"Duplicate request processed idempotently\"}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "name": "Cancel Order",
+      "request": {
+        "method": "POST",
+        "url": "/v1/orders/ord_999/cancel"
+      },
+      "scenarioName": "Order Process",
+      "newScenarioState": "Order Cancelled",
+      "response": {
+        "status": 200,
+        "body": "{\"order_id\": \"ord_999\", \"status\": \"CANCELLED\"}"
+      }
+    },
+    {
+      "name": "Eventual Consistency - Read Lag",
+      "request": {
+        "method": "GET",
+        "url": "/v1/orders/ord_999"
+      },
+      "scenarioName": "Consistency Lag",
+      "requiredScenarioState": "Started",
+      "newScenarioState": "Data Synced",
+      "response": {
+        "status": 404,
+        "body": "{\"error\": \"Order not found yet - downstream sync in progress\", \"correlation_id\": \"corr_abc_123\"}"
+      }
+    },
+    {
+      "name": "Eventual Consistency - Success after Retry",
+      "request": {
+        "method": "GET",
+        "url": "/v1/orders/ord_999"
+      },
+      "scenarioName": "Consistency Lag",
+      "requiredScenarioState": "Data Synced",
+      "response": {
+        "status": 200,
+        "body": "{\"order_id\": \"ord_999\", \"status\": \"PLACED\", \"amount\": \"100.0000\"}"
       }
     }
   ]

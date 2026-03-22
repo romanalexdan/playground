@@ -34,6 +34,9 @@ dependencies {
     testImplementation 'org.slf4j:slf4j-api:2.0.17'
     testImplementation 'ch.qos.logback:logback-classic:1.5.32'
     testImplementation 'org.slf4j:log4j-over-slf4j:2.0.17'
+
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.41.0")
+    testImplementation("com.codeborne:selenide:7.15.0")
 }
 
 test {

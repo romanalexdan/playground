@@ -3,8 +3,8 @@ package rest;
 import io.restassured.parsing.Parser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
-import org.example.models.Order;
-import org.example.models.OrderStatus;
+import org.example.models.Kyc;
+import org.example.models.KycStatus;
 import org.example.models.Transaction;
 import org.example.models.TransactionResponse;
 
@@ -43,7 +43,7 @@ public class SimpleApiTest {
     }
 
     @Test
-    public void test_Get() {
+    public void test_GetWithNextCursor() {
         final Response response = RestAssured.get("/v1/transactions?limit=2");
         log.info("Get API call successful");
 
@@ -68,22 +68,21 @@ public class SimpleApiTest {
         Assert.assertEquals(response.statusCode(), HttpStatus.SC_OK, "Should get " + HttpStatus.SC_OK);
         Assert.assertFalse(response.getBody().asString().isEmpty(), "Should not return empty body");
 
-        final Order order = response.getBody().as(Order.class);
-        Assert.assertEquals(order.status, OrderStatus.PENDING, "Order should be in pending state");
-        Assert.assertEquals(order.userId, userId, "User id should match");
+        final Kyc kyc = response.getBody().as(Kyc.class);
+        Assert.assertEquals(kyc.status, KycStatus.PENDING, "Order should be in pending state");
+        Assert.assertEquals(kyc.userId, userId, "User id should match");
 
         await()
                 .atMost(3500, TimeUnit.MILLISECONDS)
                 .pollInterval(200, TimeUnit.MILLISECONDS)
                 .until(() -> {
-                    Order orderToWait = RestAssured.get("/v1/kyc/status/" + userId).getBody().as(Order.class);
-                    System.out.println("Order status is: " + orderToWait.status);
-                    return orderToWait.status.compareTo(OrderStatus.APPROVED) == 0;
+                    Kyc kycToWait = RestAssured.get("/v1/kyc/status/" + userId).getBody().as(Kyc.class);
+                    return kycToWait.status.compareTo(KycStatus.APPROVED) == 0;
                 });
     }
 
     @Test
-    public void test_PostWithRateLimit() {
+    public void test_NegativePostWithRateLimit() {
         Response response = RestAssured.post("/v1/transfer");
         Assert.assertEquals(response.statusCode(),429,"Status code should be 429");
         Assert.assertEquals(response.getHeader("Retry-After"),"5","Should return 5 seconds");

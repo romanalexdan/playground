@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+public class Kyc {
 
     @JsonProperty("user_id")
     public String userId;
 
-    public OrderStatus status;
+    public KycStatus status;
 }
 
 

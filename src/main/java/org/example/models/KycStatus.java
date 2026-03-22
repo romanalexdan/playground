@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum OrderStatus {
+public enum KycStatus {
     APPROVED("APPROVED"),
     PENDING("PENDING"),
     FAILED("FAILED");
